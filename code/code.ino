@@ -2,7 +2,7 @@
 #include <Stepper.h>
  
 // change this to the number of steps on your motor
-#define STEPS 20
+#define STEPS 36
  
 
 const int in1 = 8;
@@ -19,12 +19,17 @@ const int stopButton         =  6; // direction control button is connected to A
 const int clockwiseButton    =  5; // direction control button is connected to Arduino pin 5
 const int antiClockwisButton =  4; // direction control button is connected to Arduino pin 4
 
-
+boolean stopStatus;
 
 
  
+int direction_ = 1, rpm;
+ 
+
 void setup()
 {
+  stopStatus = false;
+  rpm = 10;
   pinMode(in1, OUTPUT);
   pinMode(in2, OUTPUT);
   pinMode(in3, OUTPUT);
@@ -33,20 +38,39 @@ void setup()
   pinMode(stopButton, INPUT_PULLUP);
   pinMode(clockwiseButton, INPUT_PULLUP);
   pinMode(antiClockwisButton, INPUT_PULLUP);
+
+  Serial.begin(9600);
 }
- 
-int direction_ = 1, speed_ = 0;
- 
+
 void loop()
 {
   
-  if ( digitalRead(stopButton) == 0 ) {
-    speed_ = 0;
+  if (!digitalRead(stopButton)) { // button down
+    while(!digitalRead(stopButton)); // loop until button down, exit when button is up
+    stopStatus = true;
+  }
+  if (!digitalRead(clockwiseButton)) {
+    while(!digitalRead(clockwiseButton));
+    stopStatus = false;
+  }
+  if (!digitalRead(antiClockwisButton)) {
+    while(!digitalRead(antiClockwisButton));
+    stopStatus = false;
+  }
+  
+
+  if (stopStatus) {
+    Serial.println("Stopped");
+ 
   }
   else {
-    speed_ = 255;
+    Serial.println("Started");
   }
-  stepper.setSpeed(speed_);
+
+  
+  
+  
+  stepper.setSpeed(rpm);
   
   
   // if button is pressed

@@ -2,23 +2,21 @@
 #define STEPS 36
  
 
-const int in1 = 8;
-const int in2 = 9;
-const int in3 = 10;
-const int in4 = 11;
+const int IN1 = 8;
+const int IN2 = 9;
+const int IN3 = 10;
+const int IN4 = 11;
 
-Stepper stepper(STEPS, in1, in2, in3, in4);
- 
-const int stopButton         =  6; // direction control button is connected to Arduino pin 6
-const int clockwiseButton    =  5; // direction control button is connected to Arduino pin 5
-const int antiClockwisButton =  4; // direction control button is connected to Arduino pin 4
+Stepper stepper(STEPS, IN1, IN2, IN3, IN4);
+
+const int STOP_BUTTON           =  6; // direction control button is connected to Arduino pin 6
+const int CLOCKWISE_BUTTON      =  5; // direction control button is connected to Arduino pin 5
+const int ANTI_CLOCKWISE_BUTTON =  4; // direction control button is connected to Arduino pin 4
 
 boolean stopStatus;
 boolean stopPrevStatus;
 
-
- 
-int direction_ = 1, rpm;
+int direction = 1, rpm;
 int prevDirection = 1;
  
 
@@ -26,35 +24,35 @@ void setup()
 {
   stopStatus = false;
   stopPrevStatus = stopStatus;
-  prevDirection = direction_;
+  prevDirection = direction;
   rpm = 10;
-  pinMode(in1, OUTPUT);
-  pinMode(in2, OUTPUT);
-  pinMode(in3, OUTPUT);
-  pinMode(in4, OUTPUT);
+  pinMode(IN1, OUTPUT);
+  pinMode(IN2, OUTPUT);
+  pinMode(IN3, OUTPUT);
+  pinMode(IN4, OUTPUT);
   // configure button pin as input with internal pull up enabled
-  pinMode(stopButton, INPUT_PULLUP);
-  pinMode(clockwiseButton, INPUT_PULLUP);
-  pinMode(antiClockwisButton, INPUT_PULLUP);
+  pinMode(STOP_BUTTON, INPUT_PULLUP);
+  pinMode(CLOCKWISE_BUTTON, INPUT_PULLUP);
+  pinMode(ANTI_CLOCKWISE_BUTTON, INPUT_PULLUP);
 
   Serial.begin(9600);
 }
 
 void loop()
 { 
-  if (!digitalRead(stopButton)) { // button down
-    while(!digitalRead(stopButton)); // loop until button down, exit when button is up
+  if (!digitalRead(STOP_BUTTON)) { // button down
+    while(!digitalRead(STOP_BUTTON)); // loop until button down, exit when button is up
     stopStatus = true;
   }
-  if (!digitalRead(clockwiseButton)) {
-    while(!digitalRead(clockwiseButton));
+  if (!digitalRead(CLOCKWISE_BUTTON)) {
+    while(!digitalRead(CLOCKWISE_BUTTON));
     stopStatus = false;
-    direction_ = 1;
+    direction = 1;
   }
-  if (!digitalRead(antiClockwisButton)) {
-    while(!digitalRead(antiClockwisButton));
+  if (!digitalRead(ANTI_CLOCKWISE_BUTTON)) {
+    while(!digitalRead(ANTI_CLOCKWISE_BUTTON));
     stopStatus = false;
-    direction_ = -1;
+    direction = -1;
   }
 
   if (HasStopStatusChanged()) {
@@ -69,10 +67,10 @@ void loop()
 
   if (!stopStatus) {
     // move the stepper motor
-    stepper.step(direction_);
+    stepper.step(direction);
   }
   stopPrevStatus = stopStatus;
-  prevDirection = direction_;
+  prevDirection = direction;
 
 }
 
@@ -91,5 +89,5 @@ void PrintStopStatus() {
 
 void PrintDir() {
   Serial.print("direction: ");
-  Serial.println(direction_ > 0 ? "clockwise" : "antiClockwise");
+  Serial.println(direction > 0 ? "Clockwise" : "AntiClockwise");
 }

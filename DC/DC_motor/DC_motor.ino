@@ -1,9 +1,8 @@
 // Arduino DC motor speed and direction control
  
 #define DIR_BUTTON          5  //CHANGE DIRECTION BUTTON
-#define POT                 0 
-#define PWM1                9
-#define PWM2                10
+#define ANTI_CLOCKWISE           9 //ANTI CLOCKWISE DIRECTION 
+#define CLOCKWISE                10 //CLOCKWISE DIRECTION 
 #define INCREASE_BUTTON     4  //INCREASE MOTOR SPEED BUTTON
 #define DECREASE_BUTTON     3  //DECREASE MOTOR SPEED BUTTON
 #define STOP_START_BUTTON   2  //STOP and START BUTTON
@@ -11,7 +10,7 @@
 boolean motorDir         =  0;
 boolean stopStatus       =  0;
 boolean changeStatus     =  0;
-int pwmAnalogeValue;
+int pwmValue;
  
 void setup() {
   Serial.begin(9600);
@@ -21,11 +20,11 @@ void setup() {
   pinMode(STOP_START_BUTTON, INPUT_PULLUP);
   pinMode(DECREASE_BUTTON, INPUT_PULLUP);  
  
-  pinMode(PWM1, OUTPUT);
-  pinMode(PWM2, OUTPUT);
+  pinMode(ANTI_CLOCKWISE, OUTPUT);
+  pinMode(CLOCKWISE, OUTPUT);
 
-  pwmAnalogeValue = analogRead(POT) / 4;
-  Serial.println("start pwm : " +  String(motorSpeed));
+  pwmValue = 255;
+  Serial.println("start pwm : " +  String(pwmValue));
 }
  
 void loop() {
@@ -37,40 +36,40 @@ void loop() {
   }
  
   if(stopStatus){
-   digitalWrite(PWM1, 0);
-   digitalWrite(PWM2, 0);
+   digitalWrite(ANTI_CLOCKWISE, 0);
+   digitalWrite(CLOCKWISE, 0);
   }else{
     if(!digitalRead(INCREASE_BUTTON)){              
       while(!digitalRead(INCREASE_BUTTON));
      
-      pwmAnalogeValue = pwmAnalogeValue  + 10;
+      pwmValue = pwmValue  + 10;
       changeStatus = 1;
     }
    
     if(!digitalRead(DECREASE_BUTTON)){              
       while(!digitalRead(DECREASE_BUTTON));     
       
-      pwmAnalogeValue = pwmAnalogeValue  - 10;
+      pwmValue = pwmValue  - 10;
       changeStatus = 1;
     }
    
-    if(pwmAnalogeValue > 255){
-      pwmAnalogeValue = 255;
+    if(pwmValue > 255){
+      pwmValue = 255;
       changeStatus = 1;
-    }else if(pwmAnalogeValue < 0){
-      pwmAnalogeValue = 0;
+    }else if(pwmValue < 0){
+      pwmValue = 0;
       changeStatus = 1;
     }
    
-    if(flag){
-      Serial.println("current pwm : " + String(pwmAnalogeValue));
+    if(changeStatus){
+      Serial.println("current pwm : " + String(pwmValue));
       changeStatus = 0;
     }  
    
     if(motorDir)
-      analogWrite(PWM1, pwmAnalogeValue);
+      analogWrite(ANTI_CLOCKWISE, pwmValue);
     else
-      analogWrite(PWM2, pwmAnalogeValue);
+      analogWrite(CLOCKWISE, pwmValue);
 
 
     if(!digitalRead(DIR_BUTTON)){              
@@ -78,9 +77,9 @@ void loop() {
      
      motorDir = !motorDir;               
      if(motorDir)
-       digitalWrite(PWM2, 0);
+       digitalWrite(CLOCKWISE, 0);
      else
-       digitalWrite(PWM1, 0);
+       digitalWrite(ANTI_CLOCKWISE, 0);
     }
   }
 }

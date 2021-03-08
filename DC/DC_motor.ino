@@ -11,20 +11,20 @@
 boolean motorDir         =  0;
 boolean stopStatus       =  0;
 boolean changeStatus     =  0;
-int motorSpeed;
+int pwmAnalogeValue;
  
 void setup() {
   Serial.begin(9600);
  
   pinMode(DIR_BUTTON, INPUT_PULLUP);
-  pinMode(INCREASE_BUTTON , INPUT_PULLUP);
-  pinMode(STOP_START_BUTTON , INPUT_PULLUP);
+  pinMode(INCREASE_BUTTON, INPUT_PULLUP);
+  pinMode(STOP_START_BUTTON, INPUT_PULLUP);
   pinMode(DECREASE_BUTTON, INPUT_PULLUP);  
  
-  pinMode(PWM1,   OUTPUT);
-  pinMode(pwm2,   OUTPUT);
+  pinMode(PWM1, OUTPUT);
+  pinMode(PWM2, OUTPUT);
 
-  motorSpeed = analogRead(POT) / 4;
+  pwmAnalogeValue = analogRead(POT) / 4;
   Serial.println("start pwm : " +  String(motorSpeed));
 }
  
@@ -43,34 +43,34 @@ void loop() {
     if(!digitalRead(INCREASE_BUTTON)){              
       while(!digitalRead(INCREASE_BUTTON));
      
-      motorSpeed = motorSpeed  + 10;
+      pwmAnalogeValue = pwmAnalogeValue  + 10;
       changeStatus = 1;
     }
    
     if(!digitalRead(DECREASE_BUTTON)){              
       while(!digitalRead(DECREASE_BUTTON));     
       
-      motorSpeed = motorSpeed  - 10;
+      pwmAnalogeValue = pwmAnalogeValue  - 10;
       changeStatus = 1;
     }
    
-    if(motorSpeed > 255){
-      motorSpeed = 255;
+    if(pwmAnalogeValue > 255){
+      pwmAnalogeValue = 255;
       changeStatus = 1;
-    }else if(motorSpeed < 0){
-      motorSpeed = 0;
+    }else if(pwmAnalogeValue < 0){
+      pwmAnalogeValue = 0;
       changeStatus = 1;
     }
    
     if(flag){
-      Serial.println("current pwm : " + String(motorSpeed));
+      Serial.println("current pwm : " + String(pwmAnalogeValue));
       changeStatus = 0;
     }  
    
     if(motorDir)
-      analogWrite(PWM1, motorSpeed);
+      analogWrite(PWM1, pwmAnalogeValue);
     else
-      analogWrite(PWM2, motorSpeed);
+      analogWrite(PWM2, pwmAnalogeValue);
 
 
     if(!digitalRead(DIR_BUTTON)){              
